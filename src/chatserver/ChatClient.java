@@ -9,12 +9,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -40,6 +42,7 @@ public class ChatClient {
     BufferedReader in;
     PrintWriter out;
     JFrame frame = new JFrame("Chatter");
+    JPanel westPanel = new JPanel();
     JTextField textField = new JTextField(40);
     JTextArea messageArea = new JTextArea(8, 40);
     // TODO: Add a list box
@@ -66,7 +69,12 @@ public class ChatClient {
         
         frame.getContentPane().add(new JScrollPane(messageArea), "South");
         frame.getContentPane().add(new JScrollPane(clients),"East");
-        frame.getContentPane().add(checkbox,"West");
+        
+        westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.Y_AXIS));
+        westPanel.add(checkbox);
+        westPanel.add(Clabel);
+        
+        frame.getContentPane().add(westPanel, "West");
         
         frame.getContentPane().add(new JScrollPane(messageArea), "Center");
         frame.pack();
@@ -143,6 +151,8 @@ public class ChatClient {
                 out.println(getName());
             } else if (line.startsWith("NAMEACCEPTED")) {
                 textField.setEditable(true);
+                String clientName = line.substring(13);
+                frame.setTitle(clientName + " - Chatter");
             } else if (line.startsWith("MESSAGE")) {
                 messageArea.append(line.substring(8) + "\n");
             } else if (line.startsWith("CHECK")) {

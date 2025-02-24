@@ -138,7 +138,7 @@ public class ChatServer {
                 // Now that a successful name has been chosen, add the
                 // socket's print writer to the set of all writers so
                 // this client can receive broadcast messages.
-                out.println("NAMEACCEPTED");
+                out.println("NAMEACCEPTED " + name);
                 writers.add(out);
                 
                 namesWithWriters.put(name, out);
