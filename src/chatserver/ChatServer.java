@@ -162,21 +162,57 @@ public class ChatServer {
                     // TODO: Add code to send a message to a specific client and not
                     // all clients. You may have to use a HashMap to store the sockets along 
                     // with the chat client names
-                    for (PrintWriter writer : writers) {
-                        writer.println("MESSAGE " + name + ": " + input);
-                    }
+                    
+                    //Checking broadcast massage or client to client massage
+                    out.println("CHECK");
+                    check = in.readLine();
+                    
+                    if(check.equals("true")) {
+                    
+	                    for (PrintWriter writer : writers) {
+	                        writer.println("MESSAGE " + name + ": " + input);
+	                    }
+                    
+                    } else {
+						out.println("CLIENTS");
+						clientsName.add(in.readLine());
+						
+						for (String key : namesWithWriters.keySet()) {
+							for (String Cname:clientsName) {
+								if(key.equals(Cname)) {
+									HashSet<PrintWriter> Client = new HashSet<PrintWriter>();
+                    				Client.add(namesWithWriters.get(key));
+                    				
+                    				for (PrintWriter writer : Client) {
+                    					writer.println("MESSAGE " + name + ": " + input);
+                                        out.println("MESSAGE " + "\t\t"+name + ": " + input);
+                    				}
+                    				
+                    				clientsName.clear();
+								}
+							}
+						}
+					}
                 }
             }// TODO: Handle the SocketException here to handle a client closing the socket
+            catch (java.net.SocketException e) {
+            	System.out.println("Seams one client left");
+            }
             catch (IOException e) {
                 System.out.println(e);
             } finally {
                 // This client is going down!  Remove its name and its print
                 // writer from the sets, and close its socket.
-            	synchronized (names) {
-            		if (name != null) {
-                        names.remove(name);
-                    }
-				}
+            	if (name != null) {
+                    names.remove(name);
+                    namesWithWriters.remove(name);
+                }
+            	
+            	for (String key: namesWithWriters.keySet()) {
+                	if(!key.equals(name)) {
+                	namesWithWriters.get(key).println("REMOVE"+name);
+                	}
+                }
                 
                 if (out != null) {
                     writers.remove(out);
