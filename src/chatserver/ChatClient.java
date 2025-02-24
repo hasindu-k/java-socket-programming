@@ -1,6 +1,7 @@
 package chatserver;
 
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -9,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
@@ -71,9 +73,15 @@ public class ChatClient {
         frame.getContentPane().add(new JScrollPane(clients),"East");
         
         westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.Y_AXIS));
+
+        westPanel.add(Box.createVerticalGlue()); // Push everything down
         westPanel.add(checkbox);
+        checkbox.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         westPanel.add(Clabel);
-        
+        Clabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        westPanel.add(Box.createVerticalGlue()); // Push everything up
+
         frame.getContentPane().add(westPanel, "West");
         
         frame.getContentPane().add(new JScrollPane(messageArea), "Center");
