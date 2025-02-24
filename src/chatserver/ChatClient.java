@@ -9,7 +9,11 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -39,9 +43,12 @@ public class ChatClient {
     JTextField textField = new JTextField(40);
     JTextArea messageArea = new JTextArea(8, 40);
     // TODO: Add a list box
+    JCheckBox checkbox = new JCheckBox();
+    JLabel Clabel = new JLabel("Broadcast");
+    JList<String> clients = new JList<>();
+    DefaultListModel<String> model = new DefaultListModel<>();
+    boolean check;
     
-    
-
     /**
      * Constructs the client by laying out the GUI and registering a
      * listener with the textfield so that pressing Return in the
@@ -56,6 +63,11 @@ public class ChatClient {
         textField.setEditable(false);
         messageArea.setEditable(false);
         frame.getContentPane().add(textField, "North");
+        
+        frame.getContentPane().add(new JScrollPane(messageArea), "South");
+        frame.getContentPane().add(new JScrollPane(clients),"East");
+        frame.getContentPane().add(checkbox,"West");
+        
         frame.getContentPane().add(new JScrollPane(messageArea), "Center");
         frame.pack();
 
@@ -72,6 +84,17 @@ public class ChatClient {
                 out.println(textField.getText());
                 textField.setText("");
             }
+        });
+        
+        checkbox.addActionListener(new ActionListener() {
+        	@Override
+			public void actionPerformed(ActionEvent e) {
+        		if(checkbox.isSelected()) {
+					check = true;
+				} else {
+					check = false;
+				}
+        	}
         });
         
         
@@ -122,8 +145,17 @@ public class ChatClient {
                 textField.setEditable(true);
             } else if (line.startsWith("MESSAGE")) {
                 messageArea.append(line.substring(8) + "\n");
-            } else if (line.startsWith("MESSAGE")) {
-                messageArea.append(line.substring(8) + "\n");
+            } else if (line.startsWith("CHECK")) {
+            	out.println(check);
+            	System.out.println(check);
+            } else if(line.startsWith("CLIENTS")){
+            	out.println(clients.getSelectedValue());
+            } else if (line.startsWith("REMOVE")) {
+            	model.removeElement(line.substring(7));
+            	clients.setModel(model);
+            } else {
+            	clients.setModel(model);
+            	model.addElement(line.substring(0));
             }
         }
     }
